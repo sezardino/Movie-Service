@@ -113,10 +113,10 @@ App.propTypes = {
 
 const mapStateToProps = (state) => {
 	return {
-		movies: state.movies,
-		activeFilter: state.activeFilter,
-		showCount: state.showCount,
-		authorizationStatus: state.authorizationStatus,
+		movies: state.data.movies,
+		activeFilter: state.logic.activeFilter,
+		showCount: state.logic.showCount,
+		authorizationStatus: state.user.authorizationStatus,
 	};
 };
 const mapDispatchToProps = (dispatch) => {
