@@ -21,9 +21,9 @@ const withVideoPlayer = (Component) => {
 		}
 
 		componentDidMount() {
+			console.log(this.props);
 			const player = this.playerRef.current;
-			console.log(this.props.movie);
-			player.src = this.props.movie.movie;
+			player.src = this.props.movie.videoLink;
 			console.log(player);
 
 			player.oncanplay = () => {
@@ -48,7 +48,7 @@ const withVideoPlayer = (Component) => {
 
 		componentDidUpdate() {
 			const player = this.playerRef.current;
-			const {isPlaying, fullScreen} = this.state;
+			const {isPlaying} = this.state;
 			isPlaying ? player.play() : player.pause();
 		}
 

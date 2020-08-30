@@ -5,20 +5,20 @@ const GenreList = (props) => {
 	const {genres, activeFilter, onFilterClick} = props;
 	return (
 		<ul className="catalog__genres-list">
-			{genres.map((item) => (
+			{genres.map((item, i) => (
 				<li
 					className={`catalog__genres-item ${
-						activeFilter === item.key ? `catalog__genres-item--active` : ``
+						activeFilter === item ? `catalog__genres-item--active` : ``
 					}`}
-					key={item.key}>
+					key={item + i}>
 					<a
 						href="#"
 						className="catalog__genres-link"
 						onClick={(evt) => {
 							evt.preventDefault();
-							onFilterClick(item.key);
+							onFilterClick(item);
 						}}>
-						{item.title}
+						{item}
 					</a>
 				</li>
 			))}

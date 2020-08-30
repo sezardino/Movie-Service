@@ -1,4 +1,5 @@
 import React, {PureComponent} from 'react';
+import PropTypes from 'prop-types';
 
 export default class Tabs extends PureComponent {
 	constructor(props) {
@@ -15,6 +16,25 @@ export default class Tabs extends PureComponent {
 
 	render() {
 		const {activeTab} = this.state;
+		const {
+			description,
+			director,
+			genre,
+			id,
+			name,
+			rating,
+			released,
+			starring,
+			backgroundColor,
+			backgroundImage,
+			isFavorite,
+			posterImage,
+			previewImage,
+			previewVideoLink,
+			runTime,
+			scoresCount,
+			videoLink,
+		} = this.props.movieData;
 		return (
 			<div className="movie-card__desc">
 				<nav className="movie-nav movie-card__nav">
@@ -41,35 +61,22 @@ export default class Tabs extends PureComponent {
 				{activeTab === 0 && (
 					<>
 						<div className="movie-rating">
-							<div className="movie-rating__score">8,9</div>
+							<div className="movie-rating__score">{rating}</div>
 							<p className="movie-rating__meta">
 								<span className="movie-rating__level">Very good</span>
-								<span className="movie-rating__count">240 ratings</span>
+								<span className="movie-rating__count">{scoresCount}</span>
 							</p>
 						</div>
 
 						<div className="movie-card__text">
-							<p>
-								In the 1930s, the Grand Budapest Hotel is a popular European ski resort, presided
-								over by concierge Gustave H. (Ralph Fiennes). Zero, a junior lobby boy, becomes
-								Gustave's friend and protege.
-							</p>
-
-							<p>
-								Gustave prides himself on providing first-class service to the hotel's guests,
-								including satisfying the sexual needs of the many elderly women who stay there. When
-								one of Gustave's lovers dies mysteriously, Gustave finds himself the recipient of a
-								priceless painting and the chief suspect in her murder.
-							</p>
+							<p>{description}</p>
 
 							<p className="movie-card__director">
-								<strong>Director: Wes Andreson</strong>
+								<strong>Director: {director}</strong>
 							</p>
 
 							<p className="movie-card__starring">
-								<strong>
-									Starring: Bill Murray, Edward Norton, Jude Law, Willem Dafoe and other
-								</strong>
+								<strong>Starring: {starring}</strong>
 							</p>
 						</div>
 					</>
@@ -79,39 +86,26 @@ export default class Tabs extends PureComponent {
 						<div className="movie-card__text-col">
 							<p className="movie-card__details-item">
 								<strong className="movie-card__details-name">Director</strong>
-								<span className="movie-card__details-value">Wes Andreson</span>
+								<span className="movie-card__details-value">{director}</span>
 							</p>
 							<p className="movie-card__details-item">
 								<strong className="movie-card__details-name">Starring</strong>
-								<span className="movie-card__details-value">
-									Bill Murray, <br />
-									Edward Norton, <br />
-									Jude Law, <br />
-									Willem Dafoe, <br />
-									Saoirse Ronan, <br />
-									Tony Revoloru, <br />
-									Tilda Swinton, <br />
-									Tom Wilkinson, <br />
-									Owen Wilkinson, <br />
-									Adrien Brody, <br />
-									Ralph Fiennes, <br />
-									Jeff Goldblum
-								</span>
+								<span className="movie-card__details-value">{starring}</span>
 							</p>
 						</div>
 
 						<div className="movie-card__text-col">
 							<p className="movie-card__details-item">
 								<strong className="movie-card__details-name">Run Time</strong>
-								<span className="movie-card__details-value">1h 39m</span>
+								<span className="movie-card__details-value">{runTime}</span>
 							</p>
 							<p className="movie-card__details-item">
 								<strong className="movie-card__details-name">Genre</strong>
-								<span className="movie-card__details-value">Comedy</span>
+								<span className="movie-card__details-value">{genre}</span>
 							</p>
 							<p className="movie-card__details-item">
 								<strong className="movie-card__details-name">Released</strong>
-								<span className="movie-card__details-value">2014</span>
+								<span className="movie-card__details-value">{released}</span>
 							</p>
 						</div>
 					</div>
@@ -237,3 +231,7 @@ export default class Tabs extends PureComponent {
 		);
 	}
 }
+
+Tabs.propTypes = {
+	movieData: PropTypes.object.isRequired,
+};

@@ -5,14 +5,14 @@ import PageFooter from '../page-footer/page-footer.jsx';
 import MovieList from '../movie-list/movie-list.jsx';
 
 const MoviePage = (props) => {
-	const {title, poster} = props.movie;
-	const {onLogoClick, movies, onPlayButtonClick} = props;
+	const {genre, name, released, backgroundColor, backgroundImage, posterImage} = props.movie;
+	const {onLogoClick, onPlayButtonClick} = props;
 	return (
 		<>
-			<section className="movie-card movie-card--full">
+			<section className="movie-card movie-card--full" style={{background: backgroundColor}}>
 				<div className="movie-card__hero">
 					<div className="movie-card__bg">
-						<img src="img/bg-the-grand-budapest-hotel.jpg" alt="The Grand Budapest Hotel" />
+						<img src={backgroundImage} alt={name} />
 					</div>
 
 					<h1 className="visually-hidden">WTW</h1>
@@ -35,10 +35,10 @@ const MoviePage = (props) => {
 
 					<div className="movie-card__wrap">
 						<div className="movie-card__desc">
-							<h2 className="movie-card__title">{title}</h2>
+							<h2 className="movie-card__title">{name}</h2>
 							<p className="movie-card__meta">
-								<span className="movie-card__genre">Drama</span>
-								<span className="movie-card__year">2014</span>
+								<span className="movie-card__genre">{genre}</span>
+								<span className="movie-card__year">{released}</span>
 							</p>
 
 							<div className="movie-card__buttons">
@@ -68,10 +68,15 @@ const MoviePage = (props) => {
 				<div className="movie-card__wrap movie-card__translate-top">
 					<div className="movie-card__info">
 						<div className="movie-card__poster movie-card__poster--big">
-							<img src={poster} alt="The Grand Budapest Hotel poster" width="218" height="327" />
+							<img
+								src={posterImage}
+								alt="The Grand Budapest Hotel poster"
+								width="218"
+								height="327"
+							/>
 						</div>
 
-						<Tabs />
+						<Tabs movieData={props.movie} />
 					</div>
 				</div>
 			</section>
@@ -80,7 +85,7 @@ const MoviePage = (props) => {
 				<section className="catalog catalog--like-this">
 					<h2 className="catalog__title">More like this</h2>
 
-					<MovieList movies={movies} count={4} onMovieTitleClick={props.onMovieTitleClick} />
+					{/* <MovieList movies={movies} count={4} onMovieTitleClick={props.onMovieTitleClick} /> */}
 				</section>
 
 				<PageFooter onLogoClick={onLogoClick} />

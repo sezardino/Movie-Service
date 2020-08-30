@@ -1,30 +1,18 @@
-import {movies, genres} from './mock/mock';
-
-const FILTERS = {
-	ALL: 'all',
-	COMEDIES: 'comedy',
-	CRIME: 'crime',
-	DOCUMENTARY: 'documentary',
-	DRAMAS: 'drama',
-	HORROR: 'horror',
-	KIDS_FAMILY: 'kf',
-	ROMANCE: 'romance',
-	SCI_FI: 'sf',
-	TRILLER: 'triller',
-};
+import {transformData} from './services';
 
 const initState = {
-	activeFilter: FILTERS.ALL,
+	activeFilter: `All genres`,
 	showCountOnStart: 8,
 	showCount: 8,
 	movies: [],
-	genreList: genres,
+	authorizationStatus: false,
 };
 
 const ActionType = {
 	CHANGE_FILTER: 'CHANGE_FILTER',
 	CHANGE_SHOW_COUNT: 'CHANGE_SHOW_COUNT',
 	LOAD_MOVIES: `LOAD_MOVIES`,
+	LOGIN: `LOGIN`,
 };
 
 const ActionCreator = {
@@ -37,6 +25,7 @@ const ActionCreator = {
 		payload: 20,
 	}),
 	loadMovies: (movies) => ({type: ActionType.LOAD_MOVIES, payload: movies}),
+	login: (status) => ({type: ActionType.LOGIN, payload: status}),
 };
 
 const Operation = {
@@ -46,30 +35,14 @@ const Operation = {
 			.then((response) => transformData(response.data))
 			.then((response) => dispatch(ActionCreator.loadMovies(response)));
 	},
-};
-
-const transformData = (data) => {
-	return data.map((item) => {
-		return {
-			description: item.description,
-			director: item.director,
-			genre: item.genre,
-			id: item.id,
-			name: item.name,
-			rating: item.rating,
-			released: item.released,
-			starring: item.starring,
-			backgroundColor: item.background_color,
-			backgroundImage: item.background_image,
-			isFavorite: item.is_favorite,
-			posterImage: item.poster_image,
-			previewImage: item.preview_image,
-			previewVideoLink: item.preview_video_link,
-			runTime: item.run_time,
-			scoresCount: item.scores_count,
-			videoLink: item.video_link,
-		};
-	});
+	login: (authData) => (dispatch, _getState, api) => {
+		return api
+			.post(`/login`, {
+				email: authData.login,
+				password: authData.password,
+			})
+			.then((response) => dispatch(ActionCreator.requiredAuthorization(response.data)));
+	},
 };
 
 const reducer = (state = initState, action) => {
@@ -89,6 +62,11 @@ const reducer = (state = initState, action) => {
 			return {
 				...state,
 				movies: action.payload,
+			};
+		case ActionType.LOGIN:
+			return {
+				...state,
+				authorizationStatus: action.payload,
 			};
 	}
 	return state;

@@ -7,18 +7,21 @@ import MainScreen from '../main-screen/main-screen.jsx';
 import MoviePage from '../movie-page/movie-page.jsx';
 import MovieList from '../movie-list/movie-list.jsx';
 import GenreList from '../genre-list/genre-list.jsx';
-import PageFooter from '../page-footer/page-footer.jsx';
+import SignIn from '../sign-in/sign-in.jsx';
 import ShowMore from '../show-more/show-more.jsx';
+import withActivePlayer from '../../hocs/with-active-player/with-active-player';
 
 import PlayerScreen from '../player-screen/player-screen.jsx';
 import withVideoPlayer from '../../hocs/with-video-player/with-video-player';
 import {randomElInArr} from '../../services';
 
+const MovieListWrapped = withActivePlayer(MovieList);
 const PlayerScreenWrapped = withVideoPlayer(PlayerScreen);
 class App extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
+			authorization: props.authorizationStatus,
 			mainScreen: true,
 			moviePage: false,
 			activePlayer: false,
@@ -28,6 +31,12 @@ class App extends PureComponent {
 		this.toMainScreenHolder = this.toMainScreenHolder.bind(this);
 		this.launchMovie = this.launchMovie.bind(this);
 		this.exitMovie = this.exitMovie.bind(this);
+	}
+
+	componentDidMount() {
+		if (this.state.authorization) {
+			this.setState(() => ({mainScreen: false}));
+		}
 	}
 
 	launchMovie() {
@@ -43,21 +52,17 @@ class App extends PureComponent {
 	}
 
 	toMainScreenHolder() {
-		this.setState({mainScreen: true, moviePage: false});
+		this.setState({mainScreen: true, moviePage: false, authorization: false});
 	}
 
 	render() {
-		const {
-			movies,
-			genres,
-			showCount,
-			changeFilterHandler,
-			activeFilter,
-			showMoreClickHandler,
-		} = this.props;
-		const {mainScreen, moviePage, movieData, activePlayer} = this.state;
+		const {movies, showCount, changeFilterHandler, activeFilter, showMoreClickHandler} = this.props;
+		const genresSet = new Set([`All genres`, ...movies.map((item) => item.genre).sort()]);
+		const genres = [];
+		genresSet.forEach((item) => genres.push(item));
+		const {mainScreen, moviePage, movieData, activePlayer, authorization} = this.state;
 		const filteredList = movies.filter((item) => {
-			if (activeFilter === `all`) {
+			if (activeFilter === `All genres`) {
 				return item;
 			}
 			return item.genre === activeFilter;
@@ -65,6 +70,7 @@ class App extends PureComponent {
 		return (
 			<>
 				<Sprite />
+				{authorization && <SignIn onLogoClick={this.toMainScreenHolder} />}
 				{mainScreen && (
 					<MainScreen movie={movieData} onPlayButtonClick={this.launchMovie}>
 						<GenreList
@@ -72,7 +78,7 @@ class App extends PureComponent {
 							activeFilter={activeFilter}
 							onFilterClick={changeFilterHandler}
 						/>
-						<MovieList
+						<MovieListWrapped
 							movies={filteredList}
 							count={showCount}
 							activeFilter={activeFilter}
@@ -98,19 +104,19 @@ class App extends PureComponent {
 
 App.propTypes = {
 	movies: PropTypes.array,
-	genres: PropTypes.array.isRequired,
 	activeFilter: PropTypes.string.isRequired,
 	changeFilterHandler: PropTypes.func.isRequired,
 	showCount: PropTypes.number.isRequired,
 	showMoreClickHandler: PropTypes.func.isRequired,
+	authorizationStatus: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => {
 	return {
 		movies: state.movies,
 		activeFilter: state.activeFilter,
-		genres: state.genreList,
 		showCount: state.showCount,
+		authorizationStatus: state.authorizationStatus,
 	};
 };
 const mapDispatchToProps = (dispatch) => {

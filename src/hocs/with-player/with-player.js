@@ -6,17 +6,19 @@ const withPlayer = (Component) => {
 		constructor(props) {
 			super(props);
 			this.playerRef = React.createRef();
+			this.renderVideo = this.renderVideo.bind(this);
+		}
 
-			this.state = {
-				isPlaying: false,
-			};
-			this.mouseEnterHandler = this.mouseEnterHandler.bind(this);
-			this.mouseLeaveHandler = this.mouseLeaveHandler.bind(this);
+		componentDidMount() {
+			const {previewImage, previewVideoLink} = this.props.movie;
+			const player = this.playerRef.current;
+			player.src = previewVideoLink;
+			player.poster = previewImage;
 		}
 
 		componentDidUpdate() {
+			const {isPlaying} = this.props;
 			const player = this.playerRef.current;
-			const {isPlaying} = this.state;
 			player.volume = 0;
 			if (isPlaying) {
 				player.play();
@@ -30,30 +32,17 @@ const withPlayer = (Component) => {
 			player.volume = null;
 		}
 
-		mouseEnterHandler() {
-			this.setState({isPlaying: true});
+		renderVideo() {
+			return <video ref={this.playerRef} width="280" height="175" />;
 		}
-
-		mouseLeaveHandler() {
-			this.setState({isPlaying: false});
-		}
-
 		render() {
-			const {poster, trailer} = this.props.movie;
-			const {isPlaying} = this.state;
-			return (
-				<Component
-					{...this.props}
-					onCardMouseEnter={this.mouseEnterHandler}
-					onCardMouseLeave={this.mouseLeaveHandler}
-					isPlaying={isPlaying}>
-					<video poster={poster} ref={this.playerRef} width="280" height="175" src={trailer} />
-				</Component>
-			);
+			return <Component {...this.props} renderVideo={this.renderVideo} />;
 		}
 	}
+
 	WithPlayer.propTypes = {
 		movie: PropTypes.object.isRequired,
+		isPlaying: PropTypes.bool.isRequired,
 	};
 
 	return WithPlayer;
