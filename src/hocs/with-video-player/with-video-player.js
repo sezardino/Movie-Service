@@ -1,10 +1,12 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 
 const withVideoPlayer = (Component) => {
 	class WithVideoPlayer extends PureComponent {
 		constructor(props) {
 			super(props);
+			this.movie = props.movies[props.match.params.id - 1];
 			this.playerRef = React.createRef();
 			this.state = {
 				isPlaying: false,
@@ -21,10 +23,8 @@ const withVideoPlayer = (Component) => {
 		}
 
 		componentDidMount() {
-			console.log(this.props);
 			const player = this.playerRef.current;
-			player.src = this.props.movie.videoLink;
-			console.log(player);
+			player.src = this.movie.videoLink;
 
 			player.oncanplay = () => {
 				this.setState(() => ({duration: Math.floor(player.duration)}));
@@ -76,11 +76,12 @@ const withVideoPlayer = (Component) => {
 		}
 
 		render() {
-			const {poster} = this.props.movie;
+			const {poster} = this.movie;
 			const {isPlaying, duration, currentTime, progress} = this.state;
 			return (
 				<Component
 					{...this.props}
+					movie={this.movie}
 					onPlayButtonClick={this.playButtonHandler}
 					isPlaying={isPlaying}
 					onFullScreenClick={this.fullScreenButtonHandler}
@@ -97,7 +98,17 @@ const withVideoPlayer = (Component) => {
 		movie: PropTypes.object.isRequired,
 	};
 
-	return WithVideoPlayer;
+	const mapStateToProps = (state) => {
+		return {
+			movies: state.data.movies,
+			promoMovie: state.data.promoMovie,
+			activeFilter: state.logic.activeFilter,
+			showCount: state.logic.showCount,
+			authorizationStatus: state.user.authorizationStatus,
+		};
+	};
+
+	return connect(mapStateToProps)(WithVideoPlayer);
 };
 
 export default withVideoPlayer;

@@ -1,12 +1,20 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import {Link} from 'react-router-dom';
+import Path from '../../path';
 import Tabs from '../tabs/tabs.jsx';
 import PageFooter from '../page-footer/page-footer.jsx';
 import MovieList from '../movie-list/movie-list.jsx';
 
 const MoviePage = (props) => {
-	const {genre, name, released, backgroundColor, backgroundImage, posterImage} = props.movie;
-	const {onLogoClick, onPlayButtonClick} = props;
+	const {
+		movies,
+		match: {params},
+	} = props;
+	const movie = movies[params.id - 1];
+	const {genre, name, released, backgroundColor, backgroundImage, posterImage, id} = movie;
+	// const {onLogoClick, onPlayButtonClick} = props;
 	return (
 		<>
 			<section className="movie-card movie-card--full" style={{background: backgroundColor}}>
@@ -19,11 +27,15 @@ const MoviePage = (props) => {
 
 					<header className="page-header movie-card__head">
 						<div className="logo">
-							<a href="#" className="logo__link" onClick={onLogoClick}>
+							<Link
+								to={Path.main()}
+								className="logo__link"
+								// onClick={onLogoClick}
+							>
 								<span className="logo__letter logo__letter--1">W</span>
 								<span className="logo__letter logo__letter--2">T</span>
 								<span className="logo__letter logo__letter--3">W</span>
-							</a>
+							</Link>
 						</div>
 
 						<div className="user-block">
@@ -42,15 +54,16 @@ const MoviePage = (props) => {
 							</p>
 
 							<div className="movie-card__buttons">
-								<button
+								<Link
+									to={Path.showFilm(id)}
 									className="btn btn--play movie-card__button"
-									type="button"
-									onClick={onPlayButtonClick}>
+									// onClick={onPlayButtonClick}
+								>
 									<svg viewBox="0 0 19 19" width="19" height="19">
 										<use xlinkHref="#play-s" />
 									</svg>
 									<span>Play</span>
-								</button>
+								</Link>
 								<button className="btn btn--list movie-card__button" type="button">
 									<svg viewBox="0 0 19 20" width="19" height="20">
 										<use xlinkHref="#add" />
@@ -76,7 +89,7 @@ const MoviePage = (props) => {
 							/>
 						</div>
 
-						<Tabs movieData={props.movie} />
+						<Tabs movieData={movie} />
 					</div>
 				</div>
 			</section>
@@ -88,18 +101,31 @@ const MoviePage = (props) => {
 					{/* <MovieList movies={movies} count={4} onMovieTitleClick={props.onMovieTitleClick} /> */}
 				</section>
 
-				<PageFooter onLogoClick={onLogoClick} />
+				<PageFooter />
 			</div>
 		</>
 	);
 };
 
 MoviePage.propTypes = {
-	onLogoClick: PropTypes.func.isRequired,
-	onPlayButtonClick: PropTypes.func.isRequired,
-	movie: PropTypes.object.isRequired,
-	onMovieTitleClick: PropTypes.func.isRequired,
+	// onLogoClick: PropTypes.func.isRequired,
+	// onPlayButtonClick: PropTypes.func.isRequired,
 	movies: PropTypes.array.isRequired,
+	match: PropTypes.object.isRequired,
+	// onMovieTitleClick: PropTypes.func.isRequired,
+	// movies: PropTypes.array.isRequired,
 };
 
-export default MoviePage;
+const mapStateToProps = (state) => {
+	return {
+		movies: state.data.movies,
+		promoMovie: state.data.promoMovie,
+		activeFilter: state.logic.activeFilter,
+		showCount: state.logic.showCount,
+		authorizationStatus: state.user.authorizationStatus,
+	};
+};
+
+export {MoviePage};
+
+export default connect(mapStateToProps)(MoviePage);

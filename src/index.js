@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {createStore, applyMiddleware} from 'redux';
-import {Provider} from 'react-redux';
-import reducer from './reducer/reducer';
-import {Operation} from './reducer/data/data';
 import thunk from 'redux-thunk';
 import {compose} from 'recompose';
+import {Provider} from 'react-redux';
+import {BrowserRouter} from 'react-router-dom';
+import reducer from './reducer/reducer';
+import {Operation} from './reducer/data/data';
 import {createAPI} from './api';
 import App from './components/app/app.jsx';
 
@@ -19,10 +20,13 @@ const init = () => {
 		)
 	);
 
+	store.dispatch(Operation.loadPromoMovie());
 	store.dispatch(Operation.loadMovies());
 	ReactDOM.render(
 		<Provider store={store}>
-			<App />
+			<BrowserRouter>
+				<App />
+			</BrowserRouter>
 		</Provider>,
 		document.getElementById(`root`)
 	);
